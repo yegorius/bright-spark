@@ -1,12 +1,17 @@
 package spark;
 
-import java.util.HashMap;
-import java.util.Map;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.form.FormData;
+import io.undertow.server.handlers.form.FormDataParser;
+import io.undertow.server.handlers.form.FormEncodedDataDefinition;
+import io.undertow.util.Methods;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This objects represent the parameters sent on a Http Request. <br>
@@ -36,7 +41,7 @@ public class QueryParamsMap {
     /**
      * Holds the nested keys
      */
-    private Map<String, QueryParamsMap> queryMap = new HashMap<String, QueryParamsMap>();
+    private Map<String, QueryParamsMap> queryMap = new HashMap<>();
 
     /**
      * Value(s) for this key
@@ -44,6 +49,8 @@ public class QueryParamsMap {
     private String[] values;
 
     private Pattern p = Pattern.compile("\\A[\\[\\]]*([^\\[\\]]+)\\]*");
+
+	private boolean readStarted;
 
     /**
      * Creates a new QueryParamsMap from and HttpServletRequest. <br>
@@ -57,6 +64,59 @@ public class QueryParamsMap {
             throw new IllegalArgumentException("HttpServletRequest cannot be null.");
         }
         loadQueryString(request.getParameterMap());
+    }
+
+	public QueryParamsMap(HttpServerExchange exchange) {
+		if (exchange == null) throw new IllegalArgumentException("HttpExchange cannot be null.");
+		loadQueryString(exchange);
+	}
+
+	private void loadQueryString(HttpServerExchange exchange) {
+		Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
+		final Map<String, List<String>> arrayMap = new HashMap<>();
+		for (Map.Entry<String, Deque<String>> entry : queryParameters.entrySet()) {
+			arrayMap.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+		}
+		if (exchange.getRequestMethod().equals(Methods.POST)) {
+			final FormData parsedFormData = parseFormData(exchange);
+			if (parsedFormData != null) {
+				Iterator<String> it = parsedFormData.iterator();
+				while (it.hasNext()) {
+					final String name = it.next();
+					Deque<FormData.FormValue> val = parsedFormData.get(name);
+					if (arrayMap.containsKey(name)) {
+						List<String> existing = arrayMap.get(name);
+						for (final FormData.FormValue v : val) {
+							if(!v.isFile()) existing.add(v.getValue());
+						}
+					} else {
+						final ArrayList<String> values = new ArrayList<String>();
+						int i = 0;
+						for (final FormData.FormValue v : val) {
+							if (!v.isFile()) values.add(v.getValue());
+						}
+						arrayMap.put(name, values);
+					}
+				}
+			}
+		}
+		final Map<String, String[]> ret = new HashMap<>();
+		for(Map.Entry<String, List<String>> entry : arrayMap.entrySet()) {
+			ret.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
+		}
+		loadQueryString(ret);
+	}
+
+	private FormData parseFormData(HttpServerExchange exchange) {
+		if (readStarted) return null;
+		readStarted = true;
+		final FormDataParser parser = new FormEncodedDataDefinition().create(exchange);
+		if (parser == null) return null;
+		try {
+			return parser.parseBlocking();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     // Just for testing

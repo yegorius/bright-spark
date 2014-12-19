@@ -19,7 +19,7 @@ public class Session {
      * @param session
      * @throws IllegalArgumentException If the session is null.
      */
-    Session(HttpSession session) {
+    public Session(HttpSession session) {
         if (session == null) {
             throw new IllegalArgumentException("session cannot be null");
         }

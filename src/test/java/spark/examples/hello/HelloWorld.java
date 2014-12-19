@@ -16,16 +16,23 @@
  */
 package spark.examples.hello;
 
+import spark.Spark;
+
 import static spark.Spark.get;
 
 public class HelloWorld {
 
     public static void main(String[] args) {
 
-        get("/hello", (request, response) -> {
-            return "Hello World!";
-        });
+        get("/hello", (request, response) -> "Hello World!");
 
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Shutdown gracefully");
+                Spark.stop();
+            }
+        }));
     }
 
 }

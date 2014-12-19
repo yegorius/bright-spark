@@ -32,7 +32,6 @@ import spark.Access;
 import spark.FilterImpl;
 import spark.HaltException;
 import spark.Request;
-import spark.RequestResponseFactory;
 import spark.Response;
 import spark.RouteImpl;
 import spark.exception.ExceptionHandlerImpl;

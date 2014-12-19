@@ -4,7 +4,7 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import spark.Response;
 
-class ResponseWrapper extends Response {
+class ResponseWrapper implements Response {
 
     private Response delegate;
 
@@ -79,7 +79,8 @@ class ResponseWrapper extends Response {
     /**
      * @return true if redirected has been done
      */
-    boolean isRedirected() {
+    @Override
+    public boolean isRedirected() {
         return redirected;
     }
 

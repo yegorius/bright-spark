@@ -4,7 +4,7 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Per Wendel
  */
-public class SparkServer {
+public class SparkServer implements spark.SparkServer {
 
     private static final int SPARK_DEFAULT_PORT = 4567;
     private static final String NAME = "Spark";
@@ -66,6 +66,7 @@ public class SparkServer {
      * @param staticFilesFolder      - the route to static files in classPath
      * @param externalFilesFolder - the route to static files external to classPath.
      */
+    @Override
     public void ignite(String host, int port, String keystoreFile,
                        String keystorePassword, String truststoreFile,
                        String truststorePassword, String staticFilesFolder,
@@ -128,6 +129,7 @@ public class SparkServer {
         }
     }
 
+    @Override
     public void stop() {
         logger.info(">>> {} shutting down ...", NAME);
         try {
@@ -204,7 +206,7 @@ public class SparkServer {
                 externalResourceHandler.setBaseResource(externalStaticResources);
                 externalResourceHandler.setWelcomeFiles(new String[] {"index.html"});
                 handlersInList.add(externalResourceHandler);
-            } catch (IOException exception) {
+            } catch (Exception exception) {
                 exception.printStackTrace(); // NOSONAR
                 System.err.println("Error during initialize external resource " + externalFilesRoute); // NOSONAR
             }

@@ -4,7 +4,7 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -27,7 +27,7 @@ import spark.Request;
 import spark.Session;
 import spark.route.RouteMatch;
 
-final class RequestWrapper extends Request {
+final class RequestWrapper implements Request {
 
     private Request delegate;
 
@@ -82,7 +82,7 @@ final class RequestWrapper extends Request {
     public String body() {
         return delegate.body();
     }
-    
+
     @Override
     public byte[] bodyAsBytes() {
         return delegate.bodyAsBytes();

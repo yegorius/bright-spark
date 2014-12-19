@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spark;
+package spark.webserver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spark.Request;
+import spark.Response;
 import spark.route.RouteMatch;
 
 public final class RequestResponseFactory {
@@ -27,11 +29,11 @@ public final class RequestResponseFactory {
     }
 
     public static Request create(RouteMatch match, HttpServletRequest request) {
-        return new Request(match, request);
+        return new ServletRequest(match, request);
     }
 
     public static Response create(HttpServletResponse response) {
-        return new Response(response);
+        return new ServletResponse(response);
     }
 
 }

@@ -6,8 +6,7 @@ import org.slf4j.LoggerFactory;
 import spark.route.RouteMatcherFactory;
 import spark.route.SimpleRouteMatcher;
 import spark.servlet.SparkFilter;
-import spark.webserver.SparkServer;
-import spark.webserver.SparkServerFactory;
+import spark.undertow.NewSparkServerFactory;
 
 /**
  * Spark base class
@@ -317,7 +316,7 @@ public abstract class SparkBase {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    server = SparkServerFactory.create(hasMultipleHandlers());
+                    server = NewSparkServerFactory.create();
                     server.ignite(
                             ipAddress,
                             port,

@@ -1,0 +1,19 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'io.undertow:undertow-core:1.+',
+            'io.undertow:undertow-servlet:1.+',
+            'org.slf4j:slf4j-api:1.7.+',
+            'org.slf4j:slf4j-simple:1.7.+',
+            'org.eclipse.jetty:jetty-server:9.0.2.v20130417',
+            'org.eclipse.jetty:jetty-webapp:9.0.2.v20130417'
+
+    testCompile 'junit:junit:4.+',
+            'org.apache.httpcomponents:httpclient:4.+',
+            'org.freemarker:freemarker:2.3.20',
+            'com.google.code.gson:gson:2.2.4'
+}

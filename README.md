@@ -1,1 +1,1 @@
-bright-spark: spark ported to Undertow
+spark-undertow is Spark ported to Undertow
